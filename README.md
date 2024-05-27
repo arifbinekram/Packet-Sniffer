@@ -115,10 +115,101 @@ Here is an example of how to use the tools together:
 ## Disclaimer
 
 This project is intended for educational purposes only. Unauthorized interception of network traffic is illegal and unethical. Use this tool responsibly and only on networks where you have explicit permission to test.
+Here's the updated `README.md` file with the added instructions on how to resolve the `Address already in use` error when using `sslstrip`:
 
-## License
+```markdown
+# Packet Sniffer
 
-This project is licensed under the MIT License.
+This project is a simple packet sniffer written in Python.
+
+## Installation
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/arifbinekram/Packet-Sniffer.git
+   cd Packet-Sniffer
+   ```
+
+2. Install required dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+## Usage
+
+To run the packet sniffer, use the following command:
+```sh
+python sniffer.py
+```
+
+
+
+### Running sslstrip
+
+To use `sslstrip` with your ARP spoofer, follow these steps:
+
+1. Run `sslstrip`:
+   ```sh
+   sslstrip
+   ```
+
+   If you encounter the following error:
+   ```sh
+   Traceback (most recent call last):
+     File "/usr/lib/python3/dist-packages/twisted/internet/tcp.py", line 1346, in startListening
+       skt.bind(addr)
+   OSError: [Errno 98] Address already in use
+
+   During handling of the above exception, another exception occurred:
+
+   Traceback (most recent call last):
+     File "/usr/bin/sslstrip", line 112, in <module>
+       main(sys.argv[1:])
+     File "/usr/bin/sslstrip", line 104, in main
+       reactor.listenTCP(int(listenPort), strippingFactory)
+     File "/usr/lib/python3/dist-packages/twisted/internet/posixbase.py", line 364, in listenTCP
+       p.startListening()
+     File "/usr/lib/python3/dist-packages/twisted/internet/tcp.py", line 1348, in startListening
+       raise CannotListenError(self.interface, self.port, le)
+   twisted.internet.error.CannotListenError: Couldn't listen on any:10000: [Errno 98] Address already in use.
+   ```
+
+2. Check which process is using port `10000`:
+   ```sh
+   lsof -i :10000
+   ```
+
+   Example output:
+   ```sh
+   COMMAND    PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+   sslstrip 57398 root    8u  IPv4 111068      0t0  TCP *:webmin (LISTEN)
+   ```
+
+3. Stop the conflicting process:
+   ```sh
+   kill -9 57398
+   ```
+
+   Replace `57398` with the actual PID from the output.
+
+4. Run `sslstrip` again:
+   ```sh
+   sslstrip
+   ```
+
+Alternatively, you can choose a different port for `sslstrip`:
+```sh
+sslstrip -l 10001
+```
+
+Now `sslstrip` should be running without any issues.
+
+## Contributing
+
+Feel free to submit issues or pull requests if you find any bugs or have suggestions for improvements.
+
+
+Add these instructions to your `README.md` file to help users troubleshoot and resolve the port conflict issue when running `sslstrip`.
 
 ---
 
